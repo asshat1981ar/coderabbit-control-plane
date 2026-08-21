@@ -24,5 +24,11 @@ mechanical:
   ast_grep:
     supported: true
     rule:
-      language: kotlin
-      concept: commonmain-forbidden-platform-import
+      language: Kotlin
+      files:
+        - '**/src/commonMain/**/*.kt'
+      rule:
+        kind: import_header
+        regex: '^import\s+(java|javax|android)\.'
+      message: commonMain must not import JVM or Android APIs.
+      severity: error
