@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 
 from coderabbit_control.cli import main
+from coderabbit_control.schema import validate_document
 
 
 def _write_manifest(path: Path, *, local=()):
@@ -52,6 +53,29 @@ def _write_fingerprint(path: Path):
         ),
         encoding="utf-8",
     )
+
+
+def test_discover_json_is_schema_valid_and_round_trippable(tmp_path, capsys):
+    repo = tmp_path / "repo"
+    (repo / ".git").mkdir(parents=True)
+    (repo / ".git" / "config").write_text(
+        '[remote "origin"]\n    url = https://github.com/example/repo.git\n',
+        encoding="utf-8",
+    )
+    (repo / "pyproject.toml").write_text(
+        "[project]\nname='fixture'\nversion='0.1.0'\n",
+        encoding="utf-8",
+    )
+
+    code = main(["discover", str(repo), "--revision", "abc123", "--json"])
+
+    assert code == 0
+    payload = json.loads(capsys.readouterr().out)
+    validate_document("RepositoryFingerprint", payload)
+    assert payload["apiVersion"] == "coderabbit.control/v1"
+    assert payload["kind"] == "RepositoryFingerprint"
+    assert payload["repository"] == "example/repo"
+    assert payload["revision"] == "abc123"
 
 
 def test_resolve_emits_machine_readable_json(tmp_path, capsys):
