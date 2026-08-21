@@ -1,3 +1,4 @@
+from dataclasses import replace
 from datetime import date
 
 import pytest
@@ -156,3 +157,39 @@ def test_unknown_mandatory_policy_fails_closed():
             [],
             as_of=date(2026, 8, 20),
         )
+
+
+def test_mechanical_rule_changes_resolution_digest():
+    base = policy(
+        "profile.mechanical",
+        tier=AuthorityTier.PROFILE,
+        severity=Severity.ERROR,
+        profiles=("mechanical",),
+    )
+    left_policy = replace(
+        base,
+        mechanical_ast_grep_supported=True,
+        raw={"mechanical": {"ast_grep": {"rule": {"language": "Python", "rule": {"pattern": "left($A)"}}}}},
+    )
+    right_policy = replace(
+        base,
+        mechanical_ast_grep_supported=True,
+        raw={"mechanical": {"ast_grep": {"rule": {"language": "Python", "rule": {"pattern": "right($A)"}}}}},
+    )
+    left = resolve_policy(
+        manifest(profiles=("mechanical",)),
+        fingerprint(),
+        [left_policy],
+        {"mechanical": ("profile.mechanical",)},
+        [],
+        as_of=date(2026, 8, 20),
+    )
+    right = resolve_policy(
+        manifest(profiles=("mechanical",)),
+        fingerprint(),
+        [right_policy],
+        {"mechanical": ("profile.mechanical",)},
+        [],
+        as_of=date(2026, 8, 20),
+    )
+    assert left.resolution_digest != right.resolution_digest
