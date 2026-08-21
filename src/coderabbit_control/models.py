@@ -40,6 +40,16 @@ class ProfileStatus(StrEnum):
 
 
 @dataclass(frozen=True, slots=True)
+class ProfileSelection:
+    mandatory: tuple[str, ...] = ()
+    detected: tuple[str, ...] = ()
+    suggested: tuple[str, ...] = ()
+    explicit: tuple[str, ...] = ()
+    confidence: Mapping[str, float] = field(default_factory=dict)
+    evidence: Mapping[str, tuple[str, ...]] = field(default_factory=dict)
+
+
+@dataclass(frozen=True, slots=True)
 class RepositoryManifest:
     full_name: str
     provider: str = "github"
