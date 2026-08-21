@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://coderabbit.control/schemas/policy-definition.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "kind", "metadata", "authority", "applicability", "severity", "requirement", "targets", "mechanical"],
+  "properties": {
+    "apiVersion": {"const": "coderabbit.control/v1"},
+    "kind": {"const": "PolicyDefinition"},
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version", "status", "owners"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]+$"},
+        "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+        "status": {"enum": ["observed", "candidate", "experimental", "recommended", "mandatory", "deprecated", "disabled", "superseded"]},
+        "owners": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
+      }
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tier", "weakenable"],
+      "properties": {
+        "tier": {"enum": ["core", "profile", "repository"]},
+        "weakenable": {"type": "boolean"}
+      }
+    },
+    "applicability": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "profiles": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "paths": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "languages": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
+      }
+    },
+    "severity": {"enum": ["info", "warning", "error", "blocking"]},
+    "requirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["statement"],
+      "properties": {"statement": {"type": "string", "minLength": 1}}
+    },
+    "targets": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "coderabbit": {"$ref": "#/$defs/enabledTarget"},
+        "markdown": {"$ref": "#/$defs/enabledTarget"},
+        "pull_request_template": {"$ref": "#/$defs/enabledTarget"},
+        "ast_grep": {"$ref": "#/$defs/enabledTarget"}
+      }
+    },
+    "mechanical": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ast_grep"],
+      "properties": {
+        "ast_grep": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["supported"],
+          "properties": {
+            "supported": {"type": "boolean"},
+            "rule": {"type": "object"}
+          }
+        }
+      }
+    },
+    "dependencies": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "supersedes": {"type": "string", "minLength": 1}
+  },
+  "$defs": {
+    "enabledTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["enabled"],
+      "properties": {"enabled": {"type": "boolean"}}
+    }
+  }
+}
