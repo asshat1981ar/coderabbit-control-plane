@@ -306,7 +306,6 @@ def resolve_policy(
     resolution_digest = sha256_digest(
         {
             "repository": manifest.full_name,
-            "as_of": as_of.isoformat(),
             "inputs": {
                 "manifest": manifest_digest,
                 "fingerprint": fingerprint_digest,
