@@ -118,6 +118,23 @@ def _compile_all(effective):
     return sorted(artifacts, key=lambda item: item.path)
 
 
+def _fingerprint_document(fingerprint) -> dict[str, object]:
+    """Serialize discovery output as a schema-valid RepositoryFingerprint document."""
+    return {
+        "apiVersion": "coderabbit.control/v1",
+        "kind": "RepositoryFingerprint",
+        "repository": fingerprint.repository,
+        "revision": fingerprint.revision,
+        "languages": {
+            name: dict(value) for name, value in sorted(fingerprint.languages.items())
+        },
+        "capabilities": [dict(item) for item in fingerprint.capabilities],
+        "trust_boundaries": [dict(item) for item in fingerprint.trust_boundaries],
+        "verification_commands": list(fingerprint.verification_commands),
+        "ci_files": list(fingerprint.ci_files),
+    }
+
+
 def _effective_payload(effective) -> dict[str, object]:
     return {
         "repository": effective.repository,
@@ -198,7 +215,8 @@ def _run_discover(args: argparse.Namespace) -> int:
     root = Path(args.root)
     if not root.is_dir():
         raise ValueError(f"repository root does not exist: {root}")
-    _emit(discover_repository(root, args.revision), json_output=args.json)
+    fingerprint = discover_repository(root, args.revision)
+    _emit(_fingerprint_document(fingerprint), json_output=args.json)
     return EXIT_SUCCESS
 
 
@@ -291,6 +309,7 @@ def _run_audit_fleet(args: argparse.Namespace) -> int:
                 {
                     "root": str(root),
                     "repository": fingerprint.repository,
+                    "revision": fingerprint.revision,
                     "status": "PASS",
                     "detected_profiles": list(selection.detected),
                     "suggested_profiles": list(selection.suggested),
