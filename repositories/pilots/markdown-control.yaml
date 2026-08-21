@@ -1,0 +1,17 @@
+apiVersion: coderabbit.control/v1
+kind: RepositoryManifest
+repository:
+  provider: github
+  full_name: asshat1981ar/nextjs-geist-font-starter
+profiles:
+  explicit: []
+policy:
+  local: []
+generation:
+  coderabbit: true
+  pull_request_template: true
+  markdown_policy: true
+  ast_grep: true
+discovery:
+  allow_auto_detect: true
+  minimum_confidence: 0.85
