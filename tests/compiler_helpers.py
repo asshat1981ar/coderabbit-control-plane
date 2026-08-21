@@ -65,6 +65,7 @@ def effective_fixture() -> EffectivePolicySet:
     )
     return EffectivePolicySet(
         repository="example/repo",
+        revision="abc123",
         manifest_digest="sha256:" + "1" * 64,
         fingerprint_digest="sha256:" + "2" * 64,
         catalog_digest="sha256:" + "3" * 64,
