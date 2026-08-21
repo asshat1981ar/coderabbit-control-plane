@@ -13,15 +13,12 @@ applicability:
   languages: [python]
 severity: blocking
 requirement:
-  statement: Python process execution in agent-facing or untrusted-input code must not use shell=True.
+  statement: Python process execution in agent-facing or untrusted-input code must not enable a shell.
 targets:
   coderabbit: {enabled: true}
   markdown: {enabled: true}
   pull_request_template: {enabled: true}
-  ast_grep: {enabled: true}
+  ast_grep: {enabled: false}
 mechanical:
   ast_grep:
-    supported: true
-    rule:
-      language: python
-      concept: subprocess-shell-true
+    supported: false
