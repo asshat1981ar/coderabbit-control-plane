@@ -93,6 +93,7 @@ class PolicyException:
 @dataclass(frozen=True, slots=True)
 class EffectivePolicySet:
     repository: str
+    revision: str
     manifest_digest: str
     fingerprint_digest: str
     catalog_digest: str
