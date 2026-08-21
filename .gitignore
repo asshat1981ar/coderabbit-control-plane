@@ -1,0 +1,87 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Local environment / secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+*.so
+.Python
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+.tox/
+.nox/
+.venv/
+venv/
+env/
+site/
+dist/
+build/
+*.egg-info/
+
+# Rust
+target/
+**/target/
+
+# Node / JavaScript
+node_modules/
+.npm/
+.pnpm-store/
+.yarn/cache/
+.yarn/unplugged/
+.next/
+.nuxt/
+coverage/
+
+# Kotlin / Gradle
+.gradle/
+**/build/
+local.properties
+.kotlin/
+
+# Test / benchmark / temp artifacts
+.tmp/
+tmp/
+temp/
+.cache/
+*.log
+*.pid
+
+# Isolated development workspaces
+.worktrees/
+worktrees/
+
+# Local policy-compiler scratch output
+.generated/
+.generated-tmp/
+.crctl-cache/
+.crctl-work/
+
+# Local fleet simulations and replay scratch
+simulation-output/
+replay-output/
+
+# Do NOT ignore authoritative policy/config artifacts.
+# policies/**, profiles/**, repositories/**, schemas/**,
+# fixtures/**, .coderabbit.yaml, .coderabbit/**, .ast-grep/**,
+# docs/**, and EvidenceManifest fixtures are expected to be versioned.
