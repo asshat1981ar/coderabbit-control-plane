@@ -121,6 +121,7 @@ class FindingRecord:
     pull_request: int | None
     revision: str
     category: str
+    severity: str
     language: str | None
     trust_boundary: str | None
     invariant_id: str | None
