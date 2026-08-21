@@ -25,6 +25,7 @@ from .errors import (
     SecurityBoundaryError,
     StaleRevisionError,
 )
+from .fleet import audit_configured_fleet
 from .github import GitHubRestClient
 from .policy_loader import (
     load_profile_catalog,
@@ -197,8 +198,9 @@ def _build_parser() -> argparse.ArgumentParser:
     _add_resolution_arguments(explain)
 
     audit = subparsers.add_parser("audit-fleet")
-    audit.add_argument("roots", nargs="+")
-    audit.add_argument("--revision", required=True)
+    audit.add_argument("roots", nargs="*")
+    audit.add_argument("--revision")
+    audit.add_argument("--as-of")
     audit.add_argument("--dry-run", action="store_true", required=True)
     audit.add_argument("--json", action="store_true")
 
@@ -292,6 +294,15 @@ def _run_explain(args: argparse.Namespace) -> int:
 
 
 def _run_audit_fleet(args: argparse.Namespace) -> int:
+    if not args.roots:
+        as_of = date.fromisoformat(args.as_of) if args.as_of else date.today()
+        payload = audit_configured_fleet(_control_root(), as_of=as_of)
+        _emit(payload, json_output=args.json)
+        return EXIT_SUCCESS if payload["result"] == "PASS" else EXIT_PARTIAL_FAILURE
+
+    if not args.revision:
+        raise ValueError("--revision is required when auditing repository roots")
+
     repositories = []
     failures = 0
     for raw_root in args.roots:
