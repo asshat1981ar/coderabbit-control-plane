@@ -72,3 +72,22 @@ def test_policy_exception_requires_expiry_and_compensating_controls(missing):
     del payload[missing]
     with pytest.raises(SchemaValidationError):
         validate_document("PolicyException", payload)
+
+
+def test_effective_policy_set_requires_source_revision():
+    payload = {
+        "apiVersion": "coderabbit.control/v1",
+        "kind": "EffectivePolicySet",
+        "repository": "example/repo",
+        "inputs": {
+            "manifest_digest": "sha256:" + "1" * 64,
+            "fingerprint_digest": "sha256:" + "2" * 64,
+            "catalog_digest": "sha256:" + "3" * 64,
+        },
+        "profiles": [],
+        "policies": [],
+        "exceptions": [],
+        "resolution_digest": "sha256:" + "4" * 64,
+    }
+    with pytest.raises(SchemaValidationError):
+        validate_document("EffectivePolicySet", payload)
