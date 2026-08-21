@@ -3,11 +3,22 @@
   "$id": "https://coderabbit.control/schemas/effective-policy-set.schema.json",
   "type": "object",
   "additionalProperties": false,
-  "required": ["apiVersion", "kind", "repository", "inputs", "profiles", "policies", "exceptions", "resolution_digest"],
+  "required": [
+    "apiVersion",
+    "kind",
+    "repository",
+    "revision",
+    "inputs",
+    "profiles",
+    "policies",
+    "exceptions",
+    "resolution_digest"
+  ],
   "properties": {
     "apiVersion": {"const": "coderabbit.control/v1"},
     "kind": {"const": "EffectivePolicySet"},
     "repository": {"type": "string", "pattern": "^[^/]+/[^/]+$"},
+    "revision": {"type": "string", "minLength": 1},
     "inputs": {
       "type": "object",
       "additionalProperties": false,
