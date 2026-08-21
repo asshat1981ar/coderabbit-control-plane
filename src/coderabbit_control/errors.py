@@ -19,3 +19,7 @@ class SecurityBoundaryError(ControlPlaneError):
 
 class StaleRevisionError(ControlPlaneError):
     """Raised when repository state changes after the operation was planned."""
+
+
+class ExternalRepositoryError(ControlPlaneError):
+    """Raised when a repository provider rejects or cannot complete an operation."""
