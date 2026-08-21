@@ -1,0 +1,13 @@
+# GENERATED FILE - DO NOT EDIT DIRECTLY
+# Compiler: crctl 0.1.0
+# Effective policy: sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+
+reviews:
+  path_instructions:
+    - path: "**/*"
+      instructions: |
+        core.security.no-untrusted-shell-execution [blocking]: External text must never become execution authority.
+    - path: "**/src/commonMain/**"
+      instructions: |
+        kotlin.commonmain-platform-purity [blocking]: commonMain must remain platform-neutral.

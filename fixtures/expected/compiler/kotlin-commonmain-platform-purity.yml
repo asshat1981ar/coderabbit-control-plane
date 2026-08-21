@@ -1,0 +1,12 @@
+# GENERATED FILE - DO NOT EDIT DIRECTLY
+# Compiler: crctl 0.1.0
+# Effective policy: sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+id: kotlin-commonmain-platform-purity
+language: Kotlin
+files:
+- '**/src/commonMain/**/*.kt'
+rule:
+  kind: import_header
+  regex: ^import\s+(java|javax|android)\.
+message: commonMain must not import JVM or Android APIs.
+severity: error
