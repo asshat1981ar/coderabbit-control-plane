@@ -147,6 +147,18 @@ def test_policy_input_order_does_not_change_resolution_digest():
     assert left.resolution_digest == right.resolution_digest
 
 
+def test_resolution_digest_is_stable_across_evaluation_dates_when_effective_policy_is_same():
+    base = policy(
+        "core.test",
+        tier=AuthorityTier.CORE,
+        severity=Severity.BLOCKING,
+        maturity=PolicyMaturity.MANDATORY,
+    )
+    left = resolve_policy(manifest(), fingerprint(), [base], {}, [], as_of=date(2026, 8, 20))
+    right = resolve_policy(manifest(), fingerprint(), [base], {}, [], as_of=date(2026, 8, 21))
+    assert left.resolution_digest == right.resolution_digest
+
+
 def test_unknown_mandatory_policy_fails_closed():
     with pytest.raises(PolicyResolutionError):
         resolve_policy(
