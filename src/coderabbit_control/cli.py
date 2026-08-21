@@ -19,11 +19,13 @@ from .compiler.pull_request import compile_pull_request_template
 from .discovery import discover_repository
 from .drift import detect_drift
 from .errors import (
+    ExternalRepositoryError,
     PolicyResolutionError,
     SchemaValidationError,
     SecurityBoundaryError,
     StaleRevisionError,
 )
+from .github import GitHubRestClient
 from .policy_loader import (
     load_profile_catalog,
     load_yaml_document,
@@ -33,6 +35,7 @@ from .policy_loader import (
     repository_manifest_from_document,
 )
 from .resolver import resolve_policy
+from .sync import SyncPlan, sync_repository
 from .validation import validate_artifacts
 
 
@@ -53,7 +56,10 @@ def _jsonable(value: object) -> object:
     if is_dataclass(value):
         return _jsonable(asdict(value))
     if isinstance(value, dict):
-        return {str(key): _jsonable(item) for key, item in sorted(value.items(), key=lambda pair: str(pair[0]))}
+        return {
+            str(key): _jsonable(item)
+            for key, item in sorted(value.items(), key=lambda pair: str(pair[0]))
+        }
     if isinstance(value, (list, tuple)):
         return [_jsonable(item) for item in value]
     return value
@@ -179,6 +185,12 @@ def _build_parser() -> argparse.ArgumentParser:
     audit.add_argument("--dry-run", action="store_true", required=True)
     audit.add_argument("--json", action="store_true")
 
+    sync = subparsers.add_parser("sync")
+    _add_resolution_arguments(sync)
+    sync.add_argument("--base-branch", default="main")
+    sync.add_argument("--branch-name")
+    sync.add_argument("--apply", action="store_true")
+
     return parser
 
 
@@ -292,6 +304,46 @@ def _run_audit_fleet(args: argparse.Namespace) -> int:
     return EXIT_SUCCESS if failures == 0 else EXIT_PARTIAL_FAILURE
 
 
+def _run_sync(args: argparse.Namespace) -> int:
+    effective = _load_effective(args)
+    artifacts = _compile_all(effective)
+    evidence = validate_artifacts(effective, artifacts)
+    branch_name = args.branch_name or f"chore/coderabbit-sync-{effective.resolution_digest[7:15]}"
+    plan = SyncPlan(
+        repository=effective.repository,
+        base_branch=args.base_branch,
+        expected_head=effective.revision,
+        branch_name=branch_name,
+        artifacts=tuple(artifacts),
+        evidence=evidence,
+        commit_message="chore: sync generated CodeRabbit policy",
+        pull_request_title="chore: sync generated CodeRabbit policy",
+        pull_request_body=(
+            "Generated from validated CodeRabbit control-plane policy.\n\n"
+            f"Evidence: `{evidence.run_id}`\n"
+            f"Effective policy: `{effective.resolution_digest}`"
+        ),
+    )
+    if not args.apply:
+        _emit(
+            {
+                "mode": "dry-run",
+                "repository": plan.repository,
+                "base_branch": plan.base_branch,
+                "expected_head": plan.expected_head,
+                "branch_name": plan.branch_name,
+                "files": [artifact.path for artifact in plan.artifacts],
+                "evidence_run_id": plan.evidence.run_id,
+            },
+            json_output=args.json,
+        )
+        return EXIT_SUCCESS
+
+    result = sync_repository(plan, GitHubRestClient.from_environment())
+    _emit(result, json_output=args.json)
+    return EXIT_SUCCESS
+
+
 _HANDLERS = {
     "discover": _run_discover,
     "classify": _run_classify,
@@ -301,6 +353,7 @@ _HANDLERS = {
     "diff": _run_diff,
     "audit-fleet": _run_audit_fleet,
     "explain": _run_explain,
+    "sync": _run_sync,
 }
 
 
@@ -316,7 +369,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     except (PolicyResolutionError, SecurityBoundaryError) as exc:
         print(str(exc), file=sys.stderr)
         return EXIT_POLICY_REJECTED
-    except StaleRevisionError as exc:
+    except (StaleRevisionError, ExternalRepositoryError) as exc:
         print(str(exc), file=sys.stderr)
         return EXIT_STALE_STATE
 
