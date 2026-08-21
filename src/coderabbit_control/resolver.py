@@ -56,6 +56,16 @@ def _fingerprint_payload(fingerprint: RepositoryFingerprint) -> dict[str, object
     }
 
 
+def _mechanical_rule(policy: PolicyDefinition) -> object | None:
+    mechanical = policy.raw.get("mechanical") if isinstance(policy.raw, Mapping) else None
+    if not isinstance(mechanical, Mapping):
+        return None
+    ast_grep = mechanical.get("ast_grep")
+    if not isinstance(ast_grep, Mapping):
+        return None
+    return ast_grep.get("rule")
+
+
 def _policy_payload(policy: PolicyDefinition) -> dict[str, object]:
     return {
         "id": policy.policy_id,
@@ -68,7 +78,12 @@ def _policy_payload(policy: PolicyDefinition) -> dict[str, object]:
         "requirement": policy.requirement,
         "targets": dict(sorted(policy.targets.items())),
         "applicability": dict(policy.applicability),
-        "mechanical_ast_grep_supported": policy.mechanical_ast_grep_supported,
+        "mechanical": {
+            "ast_grep": {
+                "supported": policy.mechanical_ast_grep_supported,
+                "rule": _mechanical_rule(policy),
+            }
+        },
     }
 
 
@@ -107,15 +122,24 @@ def _merge_policy(base: PolicyDefinition, overlay: PolicyDefinition) -> PolicyDe
         name: bool(base.targets.get(name, False) or overlay.targets.get(name, False))
         for name in sorted(target_names)
     }
+    mechanical_supported = (
+        base.mechanical_ast_grep_supported or overlay.mechanical_ast_grep_supported
+    )
+    mechanical_rule = (
+        _mechanical_rule(overlay)
+        if overlay.mechanical_ast_grep_supported
+        else _mechanical_rule(base)
+    )
     return replace(
         base,
         owners=tuple(sorted(set(base.owners) | set(overlay.owners))),
         severity=severity,
         targets=targets,
-        mechanical_ast_grep_supported=(
-            base.mechanical_ast_grep_supported or overlay.mechanical_ast_grep_supported
-        ),
-        raw={"sources": [_policy_payload(base), _policy_payload(overlay)]},
+        mechanical_ast_grep_supported=mechanical_supported,
+        raw={
+            "mechanical": {"ast_grep": {"rule": mechanical_rule}},
+            "sources": [_policy_payload(base), _policy_payload(overlay)],
+        },
     )
 
 
@@ -296,6 +320,7 @@ def resolve_policy(
 
     return EffectivePolicySet(
         repository=manifest.full_name,
+        revision=fingerprint.revision,
         manifest_digest=manifest_digest,
         fingerprint_digest=fingerprint_digest,
         catalog_digest=catalog_digest,
