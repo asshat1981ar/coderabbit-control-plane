@@ -1,0 +1,22 @@
+apiVersion: coderabbit.control/v1
+kind: PolicyDefinition
+metadata:
+  id: agentic.output-is-untrusted
+  version: 1.0.0
+  status: recommended
+  owners: [agent-security]
+authority:
+  tier: profile
+  weakenable: false
+applicability:
+  profiles: [agentic-system]
+severity: blocking
+requirement:
+  statement: Model and agent output is untrusted intent or data until independently validated and authorized by trusted code.
+targets:
+  coderabbit: {enabled: true}
+  markdown: {enabled: true}
+  pull_request_template: {enabled: true}
+  ast_grep: {enabled: false}
+mechanical:
+  ast_grep: {supported: false}

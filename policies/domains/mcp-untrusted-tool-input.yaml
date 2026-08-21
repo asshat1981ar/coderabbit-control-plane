@@ -1,0 +1,22 @@
+apiVersion: coderabbit.control/v1
+kind: PolicyDefinition
+metadata:
+  id: mcp.untrusted-tool-input
+  version: 1.0.0
+  status: recommended
+  owners: [mcp-security]
+authority:
+  tier: profile
+  weakenable: false
+applicability:
+  profiles: [mcp-server]
+severity: blocking
+requirement:
+  statement: MCP tool arguments and external tool results must be treated as untrusted data and validated before they can influence privileged operations.
+targets:
+  coderabbit: {enabled: true}
+  markdown: {enabled: true}
+  pull_request_template: {enabled: true}
+  ast_grep: {enabled: false}
+mechanical:
+  ast_grep: {supported: false}

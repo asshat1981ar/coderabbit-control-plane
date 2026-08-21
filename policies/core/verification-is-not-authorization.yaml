@@ -1,0 +1,21 @@
+apiVersion: coderabbit.control/v1
+kind: PolicyDefinition
+metadata:
+  id: core.evidence.verification-is-not-authorization
+  version: 1.0.0
+  status: mandatory
+  owners: [security-core]
+authority:
+  tier: core
+  weakenable: false
+applicability: {}
+severity: blocking
+requirement:
+  statement: Verification evidence may establish that a check passed but must never directly confer execution, merge, deployment, or other authorization.
+targets:
+  coderabbit: {enabled: true}
+  markdown: {enabled: true}
+  pull_request_template: {enabled: true}
+  ast_grep: {enabled: false}
+mechanical:
+  ast_grep: {supported: false}
