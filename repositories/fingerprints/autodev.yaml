@@ -1,0 +1,44 @@
+apiVersion: coderabbit.control/v1
+kind: RepositoryFingerprint
+repository: asshat1981ar/AutoDev
+revision: 50ae85db97d2ba056ba7443dda353e41920df30c
+languages:
+  rust:
+    confidence: 1.0
+    evidence:
+      - crates/forge-core/Cargo.toml
+  kotlin:
+    confidence: 1.0
+    evidence:
+      - kotlin/build.gradle.kts
+  python:
+    confidence: 0.9
+    evidence:
+      - bootstrap_cline_mcp.py
+capabilities:
+  - id: agentic-system
+    confidence: 0.99
+    evidence: [AGENTS.md]
+  - id: kotlin-multiplatform
+    confidence: 0.99
+    evidence: [kotlin/mpp-core]
+  - id: android
+    confidence: 0.98
+    evidence: [kotlin/android-command-center]
+  - id: mcp-server
+    confidence: 0.95
+    evidence: [crates/autodev-server]
+  - id: protocol-specification
+    confidence: 0.95
+    evidence: [protocols/amcx]
+  - id: github-actions
+    confidence: 0.99
+    evidence: [.github]
+trust_boundaries:
+  - id: forgecore
+    type: trusted-execution-kernel
+    paths: [crates/forge-core/**]
+    confidence: 0.99
+verification_commands: []
+ci_files:
+  - .github/workflows/ci.yml

@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://coderabbit.control/schemas/evidence-manifest.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "kind", "run", "repository", "inputs", "outputs", "checks", "result"],
+  "properties": {
+    "apiVersion": {"const": "coderabbit.control/v1"},
+    "kind": {"const": "EvidenceManifest"},
+    "run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "compiler_version"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "compiler_version": {"type": "string", "minLength": 1}
+      }
+    },
+    "repository": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["full_name", "revision"],
+      "properties": {
+        "full_name": {"type": "string", "pattern": "^[^/]+/[^/]+$"},
+        "revision": {"type": "string", "minLength": 1}
+      }
+    },
+    "inputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["effective_policy_digest"],
+      "properties": {
+        "effective_policy_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+      }
+    },
+    "outputs": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["digest"],
+        "properties": {
+          "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+        }
+      }
+    },
+    "checks": {
+      "type": "object",
+      "additionalProperties": {"enum": ["PASS", "FAIL", "SKIP"]}
+    },
+    "result": {"enum": ["PASS", "FAIL", "PARTIAL_FAILURE"]}
+  }
+}

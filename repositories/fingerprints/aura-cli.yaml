@@ -1,0 +1,19 @@
+apiVersion: coderabbit.control/v1
+kind: RepositoryFingerprint
+repository: asshat1981ar/aura-cli
+revision: 72eb3e5ed67f64bed229c805221b33e729e20b9e
+languages:
+  python:
+    confidence: 1.0
+    evidence:
+      - pyproject.toml
+capabilities:
+  - id: agentic-system
+    confidence: 0.99
+    evidence: [pyproject.toml]
+  - id: github-actions
+    confidence: 0.99
+    evidence: [.github]
+trust_boundaries: []
+verification_commands: []
+ci_files: []

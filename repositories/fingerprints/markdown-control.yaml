@@ -1,0 +1,9 @@
+apiVersion: coderabbit.control/v1
+kind: RepositoryFingerprint
+repository: asshat1981ar/nextjs-geist-font-starter
+revision: 5b22d640903a008298bcffaf78a09ed016aa9d68
+languages: {}
+capabilities: []
+trust_boundaries: []
+verification_commands: []
+ci_files: []

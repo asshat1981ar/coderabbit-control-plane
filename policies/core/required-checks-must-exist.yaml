@@ -1,0 +1,21 @@
+apiVersion: coderabbit.control/v1
+kind: PolicyDefinition
+metadata:
+  id: core.evidence.required-checks-must-exist
+  version: 1.0.0
+  status: mandatory
+  owners: [security-core]
+authority:
+  tier: core
+  weakenable: false
+applicability: {}
+severity: error
+requirement:
+  statement: Required verification evidence must be produced by declared checks and those checks must not be silently removed, bypassed, or represented as passing when absent.
+targets:
+  coderabbit: {enabled: true}
+  markdown: {enabled: true}
+  pull_request_template: {enabled: true}
+  ast_grep: {enabled: false}
+mechanical:
+  ast_grep: {supported: false}

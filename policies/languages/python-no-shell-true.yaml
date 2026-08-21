@@ -1,0 +1,24 @@
+apiVersion: coderabbit.control/v1
+kind: PolicyDefinition
+metadata:
+  id: python.no-shell-true
+  version: 1.0.0
+  status: recommended
+  owners: [python-security]
+authority:
+  tier: profile
+  weakenable: false
+applicability:
+  profiles: [python-agent-tools]
+  languages: [python]
+severity: blocking
+requirement:
+  statement: Python process execution in agent-facing or untrusted-input code must not enable a shell.
+targets:
+  coderabbit: {enabled: true}
+  markdown: {enabled: true}
+  pull_request_template: {enabled: true}
+  ast_grep: {enabled: false}
+mechanical:
+  ast_grep:
+    supported: false

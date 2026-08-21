@@ -1,0 +1,18 @@
+version: 1
+profiles:
+  rust-secure-runtime:
+    policies: [rust.no-unchecked-trusted-boundary-panic]
+  python-agent-tools:
+    policies: [python.no-shell-true]
+  kotlin-multiplatform:
+    policies: [kotlin.commonmain-platform-purity]
+  android:
+    policies: []
+  mcp-server:
+    policies: [mcp.untrusted-tool-input]
+  agentic-system:
+    policies: [agentic.output-is-untrusted]
+  protocol-specification:
+    policies: []
+  github-actions:
+    policies: [github-actions.minimum-permissions]

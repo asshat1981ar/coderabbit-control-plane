@@ -1,0 +1,22 @@
+apiVersion: coderabbit.control/v1
+kind: PolicyDefinition
+metadata:
+  id: github-actions.minimum-permissions
+  version: 1.0.0
+  status: recommended
+  owners: [ci-security]
+authority:
+  tier: profile
+  weakenable: false
+applicability:
+  profiles: [github-actions]
+severity: error
+requirement:
+  statement: GitHub Actions workflows must declare the minimum token permissions required by their jobs and must not rely on unnecessarily broad write authority.
+targets:
+  coderabbit: {enabled: true}
+  markdown: {enabled: true}
+  pull_request_template: {enabled: true}
+  ast_grep: {enabled: false}
+mechanical:
+  ast_grep: {supported: false}

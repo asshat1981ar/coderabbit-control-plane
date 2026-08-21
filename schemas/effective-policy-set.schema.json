@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://coderabbit.control/schemas/effective-policy-set.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "apiVersion",
+    "kind",
+    "repository",
+    "revision",
+    "inputs",
+    "profiles",
+    "policies",
+    "exceptions",
+    "resolution_digest"
+  ],
+  "properties": {
+    "apiVersion": {"const": "coderabbit.control/v1"},
+    "kind": {"const": "EffectivePolicySet"},
+    "repository": {"type": "string", "pattern": "^[^/]+/[^/]+$"},
+    "revision": {"type": "string", "minLength": 1},
+    "inputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["manifest_digest", "fingerprint_digest", "catalog_digest"],
+      "properties": {
+        "manifest_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "fingerprint_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "catalog_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+      }
+    },
+    "profiles": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "policies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "version", "source", "severity"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "version": {"type": "string", "minLength": 1},
+          "source": {"type": "string", "minLength": 1},
+          "severity": {"enum": ["info", "warning", "error", "blocking"]}
+        }
+      }
+    },
+    "exceptions": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "resolution_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+  }
+}

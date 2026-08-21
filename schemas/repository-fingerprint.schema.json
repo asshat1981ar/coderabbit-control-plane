@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://coderabbit.control/schemas/repository-fingerprint.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "kind", "repository", "revision", "languages", "capabilities", "trust_boundaries", "verification_commands", "ci_files"],
+  "properties": {
+    "apiVersion": {"const": "coderabbit.control/v1"},
+    "kind": {"const": "RepositoryFingerprint"},
+    "repository": {"type": "string", "pattern": "^[^/]+/[^/]+$"},
+    "revision": {"type": "string", "minLength": 1},
+    "languages": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["confidence", "evidence"],
+        "properties": {
+          "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+          "evidence": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
+        }
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "confidence", "evidence"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+          "evidence": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
+        }
+      }
+    },
+    "trust_boundaries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "type", "paths", "confidence"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "type": {"type": "string", "minLength": 1},
+          "paths": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+          "confidence": {"type": "number", "minimum": 0, "maximum": 1}
+        }
+      }
+    },
+    "verification_commands": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "ci_files": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
+  }
+}

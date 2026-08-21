@@ -1,0 +1,15 @@
+{
+  "url": "https://api.github.com/repos/asshat1981ar/AutoDev/pulls/comments/3827220046",
+  "pull_request_review_id": 4989630760,
+  "id": 3827220046,
+  "path": ".ast-grep/rules/observer-no-process-exec.yml",
+  "commit_id": "781a9b1c874870d3711e9ecd1dd1f62350600117",
+  "original_commit_id": "32b1838739762d56954035771ec73ab15ad70c18",
+  "pull_request_url": "https://api.github.com/repos/asshat1981ar/AutoDev/pulls/40",
+  "body": "_Security & Privacy_ | _Major_ | _Quick win_\n\nExpand process-execution API coverage. Add subprocess.check_call, subprocess.check_output, and os.popen to the observer rule.",
+  "user": {"login": "coderabbitai[bot]"},
+  "line": 15,
+  "start_line": 5,
+  "created_at": "2026-08-21T04:16:43Z",
+  "updated_at": "2026-08-21T06:44:10Z"
+}

@@ -1,0 +1,34 @@
+apiVersion: coderabbit.control/v1
+kind: PolicyDefinition
+metadata:
+  id: kotlin.commonmain-platform-purity
+  version: 1.0.0
+  status: recommended
+  owners: [kotlin-platform]
+authority:
+  tier: profile
+  weakenable: false
+applicability:
+  profiles: [kotlin-multiplatform]
+  languages: [kotlin]
+  paths: ['**/src/commonMain/**']
+severity: blocking
+requirement:
+  statement: Kotlin commonMain source must remain platform-neutral and must not import Java or Android platform APIs.
+targets:
+  coderabbit: {enabled: true}
+  markdown: {enabled: true}
+  pull_request_template: {enabled: true}
+  ast_grep: {enabled: true}
+mechanical:
+  ast_grep:
+    supported: true
+    rule:
+      language: Kotlin
+      files:
+        - '**/src/commonMain/**/*.kt'
+      rule:
+        kind: import_header
+        regex: '^import\s+(java|javax|android)\.'
+      message: commonMain must not import JVM or Android APIs.
+      severity: error

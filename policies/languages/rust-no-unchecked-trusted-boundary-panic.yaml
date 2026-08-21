@@ -1,0 +1,23 @@
+apiVersion: coderabbit.control/v1
+kind: PolicyDefinition
+metadata:
+  id: rust.no-unchecked-trusted-boundary-panic
+  version: 1.0.0
+  status: recommended
+  owners: [rust-security]
+authority:
+  tier: profile
+  weakenable: false
+applicability:
+  profiles: [rust-secure-runtime]
+  languages: [rust]
+severity: error
+requirement:
+  statement: Trusted runtime boundaries must not rely on unchecked panic paths where recoverable untrusted input can reach them.
+targets:
+  coderabbit: {enabled: true}
+  markdown: {enabled: true}
+  pull_request_template: {enabled: true}
+  ast_grep: {enabled: false}
+mechanical:
+  ast_grep: {supported: false}
