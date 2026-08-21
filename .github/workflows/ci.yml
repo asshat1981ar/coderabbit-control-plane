@@ -23,6 +23,22 @@ jobs:
 
   pytest:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install development dependencies
+        run: python -m pip install -e '.[dev]'
+      - name: Pytest
+        run: python -m pytest -q
+
+  schema-validation:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -30,5 +46,24 @@ jobs:
           python-version: "3.11"
       - name: Install development dependencies
         run: python -m pip install -e '.[dev]'
-      - name: Pytest
-        run: python -m pytest -q
+      - name: Validate schemas and policy documents
+        run: python -m pytest tests/test_schema.py tests/test_policy_loader.py -q
+
+  fixture-recompile-drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install development dependencies
+        run: python -m pip install -e '.[dev]'
+      - name: Recompile golden fixtures and detect drift
+        run: >-
+          python -m pytest
+          tests/test_compiler_coderabbit.py
+          tests/test_compiler_markdown.py
+          tests/test_compiler_pull_request.py
+          tests/test_compiler_ast_grep.py
+          tests/test_drift.py
+          -q
