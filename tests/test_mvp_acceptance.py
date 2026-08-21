@@ -1,6 +1,8 @@
+import json
 from datetime import date
 from pathlib import Path
 
+from coderabbit_control.cli import main
 from coderabbit_control.compiler.ast_grep import compile_ast_grep
 from coderabbit_control.compiler.coderabbit import compile_coderabbit
 from coderabbit_control.compiler.markdown import compile_markdown
@@ -94,3 +96,18 @@ def test_pilot_evidence_snapshots_are_bound_to_specific_revisions():
             )
         )
         assert fingerprint.revision == revision
+
+
+def test_configured_fleet_audit_reports_required_evidence(capsys):
+    code = main(["audit-fleet", "--dry-run", "--json", "--as-of", "2026-08-21"])
+
+    assert code == 0
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["result"] == "PASS"
+    assert len(payload["repositories"]) == 3
+    for item in payload["repositories"]:
+        assert item["revision"]
+        assert "profile_selection" in item
+        assert item["effective_policy_digest"].startswith("sha256:")
+        assert item["artifact_digests"]
+        assert item["drift_status"]
